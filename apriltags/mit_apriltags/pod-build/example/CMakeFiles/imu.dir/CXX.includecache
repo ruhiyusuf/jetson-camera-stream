@@ -1,0 +1,40 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jetson/projects/jetson-camera-stream/apriltags/mit_apriltags/example/Serial.cpp
+fcntl.h
+-
+termios.h
+-
+stdlib.h
+-
+iostream
+-
+sstream
+-
+unistd.h
+-
+Serial.h
+/home/jetson/projects/jetson-camera-stream/apriltags/mit_apriltags/example/Serial.h
+
+/home/jetson/projects/jetson-camera-stream/apriltags/mit_apriltags/example/Serial.h
+string
+-
+
+/home/jetson/projects/jetson-camera-stream/apriltags/mit_apriltags/example/imu.cpp
+iostream
+-
+string
+-
+stdio.h
+-
+math.h
+-
+Serial.h
+/home/jetson/projects/jetson-camera-stream/apriltags/mit_apriltags/example/Serial.h
+
