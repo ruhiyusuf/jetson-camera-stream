@@ -31,17 +31,15 @@ CLIENT_IP, addr = ip_sock.recvfrom(1024)
 print(CLIENT_IP)
 
 def init_pipelines(CLIENT_IP):
-	cam0_gst_cmd = "nvarguscamerasrc sensor-id=0 sensor-mode=4 ! \
-		video/x-raw(memory:NVMM), \
+	cam0_gst_cmd = "nvarguscamerasrc sensor-id=0 sensor-mode=4 ! video/x-raw(memory:NVMM), \
 		format=NV12, width=1280, height=720 !  \
-		nvv4l2h264enc insert-sps-pps=true bitrate=3000000 peak-bitrate=3500000 \
-		iframeinterval=5 ! \
+		nvv4l2h264enc insert-sps-pps=true bitrate=2000000 iframeinterval=5 ! \
 		h264parse ! rtph264pay pt=96 ! \
 		udpsink host=" + CLIENT_IP + " port=5800"  
 
 	cam1_gst_cmd = "nvarguscamerasrc sensor-id=1 sensor-mode=4 ! video/x-raw(memory:NVMM), \
 		format=NV12, width=1280, height=720 !  \
-		nvv4l2h264enc insert-sps-pps=true bitrate=3000000 peak-bitrate=3500000 \
+		nvv4l2h264enc insert-sps-pps=true bitrate=2000000 \
 		iframeinterval=5 ! \
 		h264parse ! rtph264pay pt=96 ! \
 		udpsink host=" + CLIENT_IP + " port=5801" 
@@ -67,6 +65,8 @@ def start_pipeline(pipe):
 def start_all_pipelines():
 	start_pipeline(cam0_pipe)
 	start_pipeline(cam1_pipe)
+	cam1_pipe.set_state(Gst.State.PAUSED)
+	
 
 start_all_pipelines()
 print("started pipelines")
