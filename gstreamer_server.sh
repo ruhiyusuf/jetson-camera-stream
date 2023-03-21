@@ -18,17 +18,23 @@ gst-launch-1.0 \
 	format=NV12, width=1280, height=720' !  nvv4l2h264enc insert-sps-pps=true ! \
 	h264parse ! rtph264pay pt=96 ! udpsink host=$1 port=5801 sync=false -e \
 COMMENT
-
+# : << 'COMMENT'
 gst-launch-1.0 \
-	nvarguscamerasrc sensor-id=0 sensor-mode=4 ! 'video/x-raw(memory:NVMM), \
+	nvarguscamerasrc sensor-id=1 sensor-mode=4 ! 'video/x-raw(memory:NVMM), \
 	format=NV12, width=1280, height=720' !  \
-	nvv4l2h264enc insert-sps-pps=true ! \
-	h264parse ! rtph264pay pt=96 ! udpsink host=$1 port=5800 sync=false -e \
+	nvv4l2h264enc insert-sps-pps=false bitrate=3000000 peak-bitrate=3500000 \
+	iframeinterval=5 ! \
+	h264parse ! rtph264pay pt=96 ! \
+	udpsink host=$1 port=5800 sync=false -e  
+#		COMMENT
+	# nvv4l2h264enc insert-sps-pps=true bitrate=3000000 iframeinterval=15 ! \
+: << 'COMMENT'
+gst-launch-1.0 \
 	nvarguscamerasrc sensor-id=1 sensor-mode=4 ! 'video/x-raw(memory:NVMM), \
 	format=NV12, width=1280, height=720' !  \
 	nvv4l2h264enc insert-sps-pps=true ! \
 	h264parse ! rtph264pay pt=96 ! udpsink host=$1 port=5801 sync=false -e \
-
+COMMENT
 # attempted h265
 : << 'COMMENT'
 gst-launch-1.0 \
