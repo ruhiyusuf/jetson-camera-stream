@@ -7,6 +7,9 @@
 using std::cout;
 using std::endl;
 
+int driverPort = -1;
+int codriverPort = -1;
+
 class Gamepad
 {
 	private:
@@ -53,7 +56,7 @@ bool Gamepad::CheckConnection()
 		XINPUT_STATE state;
 		ZeroMemory(&state, sizeof(XINPUT_STATE));
  
-		if (XInputGetState(i, &state) == ERROR_SUCCESS)
+		if ((XInputGetState(i, &state) == ERROR_SUCCESS) && (i != (driverPort - 1) && (i != (codriverPort - 1))))
 			controllerId = i;
 	}
  	
@@ -109,45 +112,76 @@ bool Gamepad::IsPressed(WORD button)
 }
 
 int main() {
-	Gamepad gamepad;
- 	
-	bool wasConnected = true;
+	Gamepad driver_gamepad;
+ 	Gamepad codriver_gamepad;
+	
+	bool driver_wasConnected = true;
+	bool codriver_wasConnected = true;
  	
 	while (true)
 	{
 		Sleep(100);
  		
-		if (!gamepad.Refresh())
+		if (!driver_gamepad.Refresh())
 		{
-			if (wasConnected)
+			if (driver_wasConnected)
 			{
-				wasConnected = false;
- 				
-				cout << "Please connect an Xbox 360 controller." << endl;
+				driver_wasConnected = false;
+				cout << "Driver: Please connect an Xbox 360 controller." << endl;
+				driverPort = -1;
+			} else {
+				driverPort = driver_gamepad.GetPort();
 			}
 		}
 		else
 		{
-			if (!wasConnected)
+			if (!driver_wasConnected)
 			{
-				wasConnected = true;
- 				
-				cout << "Controller connected on port " << gamepad.GetPort() << endl;
+				driver_wasConnected = true;
+				cout << "Driver: Controller connected on port " << driver_gamepad.GetPort() << endl;
+				driverPort = driver_gamepad.GetPort();
 			}
  
-			// cout << "Left thumb stick: (" << gamepad.leftStickX << ", " << gamepad.leftStickY << ")   Right thumb stick : (" << gamepad.rightStickX << ", " << gamepad.rightStickY << ")" << endl;
- 
-			// cout << "Left analog trigger: " << gamepad.leftTrigger << "   Right analog trigger: " << gamepad.rightTrigger << endl;
-			if (gamepad.IsPressed(XINPUT_GAMEPAD_START)) {
+			
+			if (driver_gamepad.IsPressed(XINPUT_GAMEPAD_START)) {
     				cout << "cam1" << endl;
 			} 
 			
-			if (gamepad.IsPressed(XINPUT_GAMEPAD_BACK)) {
+			if (driver_gamepad.IsPressed(XINPUT_GAMEPAD_BACK)) {
     				cout << "cam0" << endl;
 			} 
+			
+		}
 
-			// if (gamepad.IsPressed(XINPUT_GAMEPAD_A)) cout << "(A) button pressed" << endl;
-			// }
+		if (!codriver_gamepad.Refresh())
+		{
+			if (codriver_wasConnected)
+			{
+				codriver_wasConnected = false;
+				cout << "CoDriver: Please connect an Xbox 360 controller." << endl;
+				codriverPort = -1;
+			} else {
+				codriverPort = codriver_gamepad.GetPort();
+			}
+		}
+		else
+		{
+			if (!codriver_wasConnected)
+			{
+				codriver_wasConnected = true;
+				cout << "CoDriver: Controller connected on port " << codriver_gamepad.GetPort() << endl;
+				codriverPort = codriver_gamepad.GetPort();
+			}
+ 
+			
+			if (codriver_gamepad.IsPressed(XINPUT_GAMEPAD_START)) {
+    				cout << "cam1" << endl;
+			} 
+			
+			if (codriver_gamepad.IsPressed(XINPUT_GAMEPAD_BACK)) {
+    				cout << "cam0" << endl;
+			} 
+			
 		}
 	}
 }
